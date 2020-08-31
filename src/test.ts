@@ -36,6 +36,9 @@ describe('RobotMk3', function() {
         assert.deepEqual(RobotControlInterface(RobotMk3, 0, 0, 'FFFF'), { x: 0, y: 4 });
         assert.deepEqual(RobotControlInterface(RobotMk3, 0, 0, '5F'), { x: 0, y: 5 });
         assert.deepEqual(RobotControlInterface(RobotMk3, 0, 0, 'R5F'), { x: 5, y: 0 });
+        
+        assert.deepEqual(RobotControlInterface(RobotMk3, 0, 0, 'FFFFFF3FLFFFFFFR5FL'), { x: -6, y: 14 });
+        assert.deepEqual(RobotControlInterface(RobotMk3, 4, 3, 'FFFFFFFF5FRFFFFFF3FRFFFFFFLFFFFF5FFF5FFFFFFFLFFFFF'), { x: 36, y: 15 });
     })
 
     it('should use up fuel', function() {
