@@ -4,7 +4,7 @@
  */
 
 import * as assert from 'assert';
-import { RobotControlInterface, RobotMk1, RobotMk2, Orientation } from './main';
+import { RobotControlInterface, RobotMk1, RobotMk2, RobotMk3, Orientation } from './main';
 
 /**
  * Part 1 tests
@@ -20,7 +20,6 @@ describe('RobotMk1', function() {
 
 describe('RobotMk2', function() {
     it('should follow instructions correctly', function() {
-        let r = new RobotMk2();
         assert.deepEqual(RobotControlInterface(RobotMk2, 0, 0, 'FFFF'), { x: 0, y: 4 });
         assert.deepEqual(RobotControlInterface(RobotMk2, 0, 0, 'FFRF'), { x: 1, y: 2 });
         assert.deepEqual(RobotControlInterface(RobotMk2, 0, 0, 'LLLF'), { x: 1, y: 0 });
@@ -30,4 +29,27 @@ describe('RobotMk2', function() {
     it('should not fall off the wall', function() {
         assert.deepEqual(RobotControlInterface(RobotMk2, 0, 0, 'LF'), { x: 0, y: 0 });
     });
+});
+
+describe('RobotMk3', function() {
+    it('should follow instructions correctly', function() {
+        assert.deepEqual(RobotControlInterface(RobotMk3, 0, 0, 'FFFF'), { x: 0, y: 4 });
+        assert.deepEqual(RobotControlInterface(RobotMk3, 0, 0, '5F'), { x: 0, y: 5 });
+        assert.deepEqual(RobotControlInterface(RobotMk3, 0, 0, 'R5F'), { x: 5, y: 0 });
+    })
+
+    it('should use up fuel', function() {
+        let r = new RobotMk3();
+        r.executeInstructions('5F');
+        assert.equal(r.fuelUnits, 25);
+        r.executeInstructions('5F5F5F5F5F');
+        assert.equal(r.fuelUnits, 0);
+        assert.equal(r.y, 30);
+
+        r.executeInstructions('1F');
+        assert.equal(r.y, 30);
+
+        r.executeInstructions('F');
+        assert.equal(r.y, 31);
+    })
 });
