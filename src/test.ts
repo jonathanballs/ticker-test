@@ -18,6 +18,9 @@ describe('RobotMk1', function() {
     })
 });
 
+/**
+ * Part 2 tests
+ */
 describe('RobotMk2', function() {
     it('should follow instructions correctly', function() {
         assert.deepEqual(RobotControlInterface(RobotMk2, 0, 0, 'FFFF'), { x: 0, y: 4 });
@@ -31,6 +34,9 @@ describe('RobotMk2', function() {
     });
 });
 
+/**
+ * Part 3 tests
+ */
 describe('RobotMk3', function() {
     it('should follow instructions correctly', function() {
         assert.deepEqual(RobotControlInterface(RobotMk3, 0, 0, 'FFFF'), { x: 0, y: 4 });

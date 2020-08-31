@@ -2,6 +2,11 @@
  * Jonathan Balls Ticker Technical Test
  * 31 August 2020
  * 
+ * This module contains a Robot interface which represents a generic robot. The
+ * three models of robot (Mk1, Mk2, Mk3) are implementations of this interface.
+ * A helper function `RobotControlInterface` is also provided to create robots
+ * and execute instructions. Examples of usage can be found in test.ts
+ * 
  * Assumptions:
  *  - RobotMK2 must not fall of the side of a wall. It is assumed that it may
  *    also not fall off the bottom/go underground.
