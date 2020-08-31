@@ -4,7 +4,7 @@ To run:
 
 ```
 npm i
-npm build
+npm run build
 npm test
 ```
 
