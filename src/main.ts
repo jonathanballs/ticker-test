@@ -11,7 +11,10 @@
  *  - RobotMK2 must not fall of the side of a wall. It is assumed that it may
  *    also not fall off the bottom/go underground.
  *  - Valid instruction strings will be given
- *  - Boosts will only be 5. Successive boosts won't overheat - only the same boost.
+ *  - RobotMk2 can still move backwards if it is told to even though the spec
+ *    stated that it shouldn't be given those commands.
+ *  - Boosts will only be up to 5. Successive boosts won't overheat - only the
+ *    same boost.
  *  - Attempting to boost without fuel will not move the robot
  */
 
@@ -21,6 +24,12 @@ interface Robot {
     executeInstructions: { (s: string) : void };
 }
 
+/**
+ * RobotMk1 is the first `Robot` to be developed by Arachnid Robotics. It
+ * accepts instruction strings made up of the letters 'F', 'B', 'L', 'R' which
+ * move the robot a single coordinate point to the front, back, left or right
+ * respectively.
+ */
 export class RobotMk1 implements Robot {
     x: number;
     y: number;
@@ -33,10 +42,10 @@ export class RobotMk1 implements Robot {
     executeInstructions(s: string) : void {
         for (const c of s) {
             switch(c) {
-                case 'F': this.x++; break;
-                case 'B': this.x--; break;
-                case 'L': this.y++; break;
-                case 'R': this.y--; break;
+                case 'F': this.y++; break;
+                case 'B': this.y--; break;
+                case 'L': this.x--; break;
+                case 'R': this.x++; break;
                 default: console.error("Bad instruction: ", c)
             }
         }
@@ -45,6 +54,16 @@ export class RobotMk1 implements Robot {
 
 
 export enum Orientation { F, B, L, R }
+/**
+ * RobotMk2 is the second generation robot from Arachnid Robotics. It accepts
+ * the same instruction set as RobotMk1 but responds slightly differently. 'L'
+ * and 'R' commands rotate the robot left and right respectively. Moving forward
+ * and backwards will move the robot depending on the current orientation of the
+ * robot. The default orientation is forward.
+ * 
+ * The robot is also not allowed to enter negative space. Commands to enter
+ * negative space (negative x or y coordinates) will be ignored.
+ */
 export class RobotMk2 implements Robot {
     x: number;
     y: number;
@@ -75,12 +94,12 @@ export class RobotMk2 implements Robot {
                 }
             }
             else if (c == 'F' || c == 'B') {
-                const change = (c == 'F' ? 1 : -1);
+                const delta = (c == 'F' ? 1 : -1);
                 switch(this.orientation) {
-                    case Orientation.F: this.y += change; break;
-                    case Orientation.R: this.x += change; break;
-                    case Orientation.B: this.y -= change; break;
-                    case Orientation.L: this.x -= change; break;
+                    case Orientation.F: this.y += delta; break;
+                    case Orientation.R: this.x += delta; break;
+                    case Orientation.B: this.y -= delta; break;
+                    case Orientation.L: this.x -= delta; break;
                 }
 
                 if (this.x < 0) this.x = 0;
@@ -90,6 +109,14 @@ export class RobotMk2 implements Robot {
     }
 }
 
+/**
+ * RobotMk3 is the third robot created by Arachnid Robotics. It works similarly
+ * to RobotMk2 but has some slight differences. The main difference is its new
+ * 'boost' functionality. Boost functionality allows the boost itself forward
+ * multiple points in a single instruction. The boost is activated by preceding
+ * the 'F' with a positive integer between 1 and 5. The robot has only 30 fuel
+ * units and won't be able to boost after that.
+ */
 export class RobotMk3 implements Robot {
     x: number;
     y: number;
@@ -131,12 +158,12 @@ export class RobotMk3 implements Robot {
                 }
             }
             else if (c == 'F' || c == 'B') {
-                const change = (c == 'F' ? (isBoosting ? currentBoost : 1): -1);
+                const delta = (c == 'F' ? (isBoosting ? currentBoost : 1): -1);
                 switch(this.orientation) {
-                    case Orientation.F: this.y += change; break;
-                    case Orientation.R: this.x += change; break;
-                    case Orientation.B: this.y -= change; break;
-                    case Orientation.L: this.x -= change; break;
+                    case Orientation.F: this.y += delta; break;
+                    case Orientation.R: this.x += delta; break;
+                    case Orientation.B: this.y -= delta; break;
+                    case Orientation.L: this.x -= delta; break;
                 }
                 currentBoost = 1;
             }
@@ -145,7 +172,15 @@ export class RobotMk3 implements Robot {
 }
 
 
-export function RobotControlInterface(robot: { new(...args: any[]): Robot; }, x: number, y: number, instructions: string) {
+/**
+ * Helper function that creates a `Robot` and executes instructions on it.
+ * @param robot An implementation of the Robot interface
+ * @param x The initial x-coordinate of the `Robot`
+ * @param y The initial y-coordinate of the `Robot`
+ * @param instructions A string representation of instructions to be sent to the
+ *                     new `Robot`
+ */
+export function RobotControlInterface(robot: { new(x: number, y: number): Robot; }, x: number, y: number, instructions: string) {
     let r = new robot(x, y);
     r.executeInstructions(instructions);
     return { x: r.x, y: r.y };
